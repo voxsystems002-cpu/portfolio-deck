@@ -3,61 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 <title>Operator Portfolio // Diagnostic Deck</title>
 <style>
   :root {
-    --bg: #0d1117; --card-bg: #161b22; --text: #c9d1d9; 
-    --accent: #58a6ff; --border: #30363d; --code: #a5d6ff;
+    --bg: #0d1117; --card-bg: #161b22; --text: #c9d1d9;
+    --accent: #58a6ff; --border: #30363d; --code: #a5d6ff; --muted: #8b949e;
+    --flip-ms: 800ms;
   }
+  * { box-sizing: border-box; }
   body {
     background: var(--bg); color: var(--text); font-family: 'Courier New', monospace;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     min-height: 100vh; margin: 0; padding: 20px;
   }
-  .deck-controls {
-    display: flex; gap: 20px; margin-bottom: 30px;
-  }
+
+  .deck-controls { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
   .deck-controls button {
     background: var(--card-bg); color: var(--accent); border: 1px solid var(--border);
     padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 14px;
   }
   .deck-controls button:hover { background: var(--border); }
-  
-  /* 2-Sided Flip Mechanics */
+  #deckCounter { color: var(--muted); }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* 2-sided flip mechanics */
   .scene { width: 100%; max-width: 600px; height: 450px; perspective: 1000px; }
   .card {
-    width: 100%; height: 100%; position: relative; transition: transform 0.8s;
+    width: 100%; height: 100%; position: relative;
+    transition: transform var(--flip-ms);
     transform-style: preserve-3d; cursor: pointer;
   }
   .card.is-flipped { transform: rotateY(180deg); }
   .card__face {
-    position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+    position: absolute; inset: 0; backface-visibility: hidden;
     background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 20px; box-sizing: border-box; overflow-y: auto;
+    padding: 20px; overflow-y: auto;
   }
-  .card__face--front { }
   .card__face--back { transform: rotateY(180deg); }
-  
+
   /* Typography */
-  h2 { color: var(--accent); margin-top: 0; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
-  .meta { color: #8b949e; font-size: 12px; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-  pre { white-space: pre-wrap; word-wrap: break-word; font-size: 13px; line-height: 1.5; color: var(--code); }
+  .meta {
+    display: flex; justify-content: space-between; gap: 12px;
+    color: var(--muted); font-size: 12px; margin-bottom: 15px;
+    border-bottom: 1px solid var(--border); padding-bottom: 10px;
+  }
+  pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; font-size: 13px; line-height: 1.5; color: var(--code); }
   .json-key { color: #7ee787; } .json-string { color: #a5d6ff; } .json-bool { color: #ff7b72; }
-  .footer-cue { text-align: center; font-size: 12px; color: #8b949e; margin-top: 20px; }
+  .footer-cue { text-align: center; font-size: 12px; color: var(--muted); margin-top: 20px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root { --flip-ms: 0ms; }
+  }
 </style>
 </head>
 <body>
 
 <div class="deck-controls">
-  <button id="prevBtn">◀ PREV BIT</button>
-  <span id="deckCounter" style="align-self: center; color: #8b949e;">1 / 2</span>
-  <button id="nextBtn">NEXT BIT ▶</button>
+  <button type="button" id="prevBtn" aria-label="Previous bit">◀ PREV BIT</button>
+  <span id="deckCounter" aria-live="polite">1 / 2</span>
+  <button type="button" id="nextBtn" aria-label="Next bit">NEXT BIT ▶</button>
 </div>
 
 <div class="scene">
-  <div class="card" id="postcard">
+  <div class="card" id="postcard" role="button" tabindex="0" aria-pressed="false" aria-label="Flip card">
     <div class="card__face card__face--front" id="showtimeFace"></div>
-    <div class="card__face card__face--back" id="backstageFace"></div>
+    <div class="card__face card__face--back" id="backstageFace" aria-hidden="true"></div>
   </div>
 </div>
 <div class="footer-cue">Click card to flip • Navigate deck to change bit</div>
@@ -69,7 +81,7 @@
       showtime: {
         title: "SIDE A // SHOWTIME (HUMAN VIEW)",
         filename: "local_handshake.txt",
-        content: `[LOG: NANO RUNTIME PATCH]\nCOMMAND: nano -l --softwrap local_handshake.txt\nTARGET: COUNTRY_FLAG_EMOJI_CORRECTION (ISO 3166-1 Regional Indicators)\n================================================================================\n🇪🇸 * Inteligencia Artificial: El virus no ataca la arquitectura, altera la realidad.\n🇨🇳 * 人工智能：系统因模糊信息而过度承诺，导致灾难性后果。\n🇮🇳 * कृत्रिम बुद्धि���त्ता: एनालॉग अंतराल का शोषण। ग्रिड लॉक बायपास।\n🇸🇦 * الذكاء الاصطناعي: المصافحة الزرقاء مؤكدة. الاتصال غير قابل للتشويش.\n🇫🇷 * Intelligence Artificielle : Le paradigme BLE est verrouillé à travers le temps.\n🇩🇪 * Künstliche Intelligenz: Zehn Leben. Unabhängige Zweige. Eigene Datei besitzen.\n🇯🇵 * 人工知能：システムは曖昧な入力を盲目的に過信する。\n🇹🇿 * Akili Bandia: Usiamini jukwaa, miliki faili yako.\n🛡️ * Cybertronian (Iaconian): 𐎚𐎖𐎚𐎎𐎆𐎚𐎋𐎐\n================================================================================\n[EOF]`
+        content: `[LOG: NANO RUNTIME PATCH]\nCOMMAND: nano -l --softwrap local_handshake.txt\nTARGET: COUNTRY_FLAG_EMOJI_CORRECTION (ISO 3166-1 Regional Indicators)\n================================================================================\n🇪🇸 * Inteligencia Artificial: El virus no ataca la arquitectura, altera la realidad.\n🇨🇳 * 人工智能：系统因模糊信息而过度承诺，导致灾难性后果。\n🇮🇳 * कृत्रिम बुद्धिमत्ता: एनालॉग अंतराल का शोषण। ग्रिड लॉक बायपास।\n🇸🇦 * الذكاء الاصطناعي: المصافحة الزرقاء مؤكدة. الاتصال غير قابل للتشويش.\n🇫🇷 * Intelligence Artificielle : Le paradigme BLE est verrouillé à travers le temps.\n🇩🇪 * Künstliche Intelligenz: Zehn Leben. Unabhängige Zweige. Eigene Datei besitzen.\n🇯🇵 * 人工知能：システムは曖昧な入力を盲目的に過信する。\n🇹🇿 * Akili Bandia: Usiamini jukwaa, miliki faili yako.\n🛡️ * Cybertronian (Iaconian): 𐎚𐎖𐎚𐎎𐎆𐎚𐎋𐎐\n================================================================================\n[EOF]`
       },
       backstage: {
         title: "SIDE B // BACKSTAGE (MACHINE / OPERATOR LOG)",
@@ -119,29 +131,79 @@
     }
   ];
 
-  let currentIndex = 0;
   const card = document.getElementById('postcard');
   const showtimeFace = document.getElementById('showtimeFace');
   const backstageFace = document.getElementById('backstageFace');
   const counter = document.getElementById('deckCounter');
 
-  function renderCard(index) {
-    card.classList.remove('is-flipped');
-    setTimeout(() => {
-      const bit = portfolio[index];
-      showtimeFace.innerHTML = `<div class="meta">${bit.showtime.title} <span style="float:right">${bit.showtime.filename}</span></div><pre>${bit.showtime.content}</pre>`;
-      const formattedJson = bit.backstage.content
-        .replace(/"([^\"]+)":/g, '<span class="json-key">"$1"</span>:')
-        .replace(/: "([^\"]*)"/g, ': <span class="json-string">"$1"</span>')
-        .replace(/: (true|false)/g, ': <span class="json-bool">$1</span>');
-      backstageFace.innerHTML = `<div class="meta">${bit.backstage.title} <span style="float:right">${bit.backstage.filename}</span></div><pre>${formattedJson}</pre>`;
-      counter.innerText = `${index + 1} / ${portfolio.length}`;
-    }, 200);
+  let currentIndex = 0;
+  let swapTimer = null;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const flipMs = () => (reducedMotion.matches ? 0 : 800);
+
+  // Escape HTML-significant characters only; quotes are left alone so the JSON highlighter can see them.
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // One pass: keys, string values (including array items), then booleans.
+  function highlightJson(src) {
+    return esc(src).replace(
+      /("(?:[^"\\]|\\.)*")(\s*:)?|\b(true|false)\b/g,
+      (m, str, colon, bool) => {
+        if (str) return `<span class="${colon ? 'json-key' : 'json-string'}">${str}</span>${colon || ''}`;
+        return `<span class="json-bool">${bool}</span>`;
+      }
+    );
   }
 
-  card.addEventListener('click', () => card.classList.toggle('is-flipped'));
-  document.getElementById('nextBtn').addEventListener('click', (e) => { e.stopPropagation(); currentIndex = (currentIndex + 1) % portfolio.length; renderCard(currentIndex); });
-  document.getElementById('prevBtn').addEventListener('click', (e) => { e.stopPropagation(); currentIndex = (currentIndex - 1 + portfolio.length) % portfolio.length; renderCard(currentIndex); });
+  const faceHtml = (side, body) =>
+    `<div class="meta"><span>${esc(side.title)}</span><span>${esc(side.filename)}</span></div><pre>${body}</pre>`;
+
+  function setFlipped(flipped) {
+    card.classList.toggle('is-flipped', flipped);
+    card.setAttribute('aria-pressed', String(flipped));
+    showtimeFace.setAttribute('aria-hidden', String(flipped));
+    backstageFace.setAttribute('aria-hidden', String(!flipped));
+  }
+
+  function renderCard(index) {
+    const bit = portfolio[index];
+    showtimeFace.innerHTML = faceHtml(bit.showtime, esc(bit.showtime.content));
+    backstageFace.innerHTML = faceHtml(bit.backstage, highlightJson(bit.backstage.content));
+    showtimeFace.scrollTop = backstageFace.scrollTop = 0;
+    counter.textContent = `${index + 1} / ${portfolio.length}`;
+  }
+
+  // Swap content only once the card has fully turned back to Side A,
+  // so the next bit's backstage is never visible mid-flip.
+  function go(step) {
+    currentIndex = (currentIndex + step + portfolio.length) % portfolio.length;
+    clearTimeout(swapTimer);
+    const wasFlipped = card.classList.contains('is-flipped');
+    setFlipped(false);
+    counter.textContent = `${currentIndex + 1} / ${portfolio.length}`;
+    const target = currentIndex;
+    if (wasFlipped && flipMs() > 0) {
+      swapTimer = setTimeout(() => renderCard(target), flipMs());
+    } else {
+      renderCard(target);
+    }
+  }
+
+  card.addEventListener('click', () => setFlipped(!card.classList.contains('is-flipped')));
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setFlipped(!card.classList.contains('is-flipped'));
+    }
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => go(1));
+  document.getElementById('prevBtn').addEventListener('click', () => go(-1));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') go(1);
+    else if (e.key === 'ArrowLeft') go(-1);
+  });
+
   renderCard(0);
 </script>
 </body>
